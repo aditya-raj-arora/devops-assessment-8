@@ -20,6 +20,16 @@
              border: none; border-radius: 6px; font-size: 1rem; cursor: pointer; }
     button:hover { background: #115e59; }
     .version { text-align: center; font-size: 0.8rem; color: #64748b; padding-bottom: 20px; }
+    .new-badge { display: inline-block; background: #f59e0b; color: #fff; font-size: 0.75rem;
+                 padding: 2px 8px; border-radius: 10px; margin-left: 6px; vertical-align: middle; }
+    .summary h2 { font-size: 1.2rem; margin-bottom: 12px; }
+    .bar-row { display: flex; align-items: center; gap: 10px; margin: 6px 0; font-size: 0.9rem; }
+    .bar-row span:first-child { width: 60px; }
+    .bar { flex: 1; height: 12px; background: #e2e8f0; border-radius: 6px; overflow: hidden; }
+    .fill { height: 100%; background: #0f766e; width: 0; transition: width 0.4s; }
+    .avg { font-size: 1.6rem; font-weight: 700; color: #0f766e; }
+    .thankyou { display: none; text-align: center; }
+    .thankyou h2 { color: #0f766e; margin-bottom: 8px; }
   </style>
 </head>
 <body>
@@ -67,14 +77,49 @@
     </form>
   </div>
 
-  <p class="version">Version 1.0</p>
+  <div class="card thankyou" id="thankyou">
+    <h2>Thank you, <span id="tyName"></span>!</h2>
+    <p>Your feedback for <b id="tyCourse"></b> has been recorded. It helps us improve teaching quality.</p>
+  </div>
+
+  <div class="card summary">
+    <h2>Course Rating Summary <span class="new-badge">NEW</span></h2>
+    <p>Average rating: <span class="avg" id="avg">0.0</span> / 5 &nbsp;(<span id="total">0</span> responses)</p>
+    <div id="bars"></div>
+  </div>
+
+  <p class="version">Version 2.0 – Added Course Rating Summary and Thank-you message</p>
 
   <script>
+    const counts = { 5: 4, 4: 6, 3: 2, 2: 1, 1: 0 };   // seed data so the summary is not empty
+
+    function renderSummary() {
+      const total = Object.values(counts).reduce((a, b) => a + b, 0);
+      const sum = Object.entries(counts).reduce((a, [k, v]) => a + k * v, 0);
+      document.getElementById("avg").textContent = total ? (sum / total).toFixed(1) : "0.0";
+      document.getElementById("total").textContent = total;
+      const bars = document.getElementById("bars");
+      bars.innerHTML = "";
+      [5, 4, 3, 2, 1].forEach(r => {
+        const pct = total ? (counts[r] / total) * 100 : 0;
+        bars.innerHTML += `<div class="bar-row"><span>${r} star</span>
+          <div class="bar"><div class="fill" style="width:${pct}%"></div></div>
+          <span>${counts[r]}</span></div>`;
+      });
+    }
+
     document.getElementById("feedbackForm").addEventListener("submit", function (e) {
       e.preventDefault();
-      alert("Feedback submitted successfully!");
+      counts[document.getElementById("rating").value]++;
+      document.getElementById("tyName").textContent = document.getElementById("student").value;
+      document.getElementById("tyCourse").textContent = document.getElementById("course").value;
+      document.getElementById("thankyou").style.display = "block";
+      renderSummary();
       this.reset();
+      document.getElementById("dept").value = "SCORE – Software Engineering";
     });
+
+    renderSummary();
   </script>
 </body>
 </html>
