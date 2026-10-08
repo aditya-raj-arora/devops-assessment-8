@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>College Placement Portal</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: "Segoe UI", Arial, sans-serif; background: #f5f3ff; color: #1f2937; }
+    header { background: linear-gradient(90deg, #4c1d95, #6d28d9); color: #fff; padding: 28px 16px; text-align: center; }
+    header h1 { font-size: 2rem; }
+    header p { margin-top: 6px; opacity: 0.9; }
+    main { max-width: 1000px; margin: 28px auto; padding: 0 16px; }
+    h2 { margin: 10px 0 14px; color: #4c1d95; }
+    .info { background: #fff; padding: 18px 20px; border-radius: 8px; margin-bottom: 24px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.07); }
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 8px; overflow: hidden;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.07); }
+    th { background: #6d28d9; color: #fff; text-align: left; padding: 12px; font-size: 0.9rem; }
+    td { padding: 12px; border-bottom: 1px solid #ede9fe; font-size: 0.92rem; }
+    tr:hover td { background: #faf5ff; }
+    .pkg { font-weight: 700; color: #047857; }
+    .deadline { color: #b91c1c; font-weight: 600; }
+    .contact { background: #fff; padding: 18px 20px; border-radius: 8px; margin-top: 24px;
+               box-shadow: 0 2px 6px rgba(0,0,0,0.07); }
+    footer { text-align: center; padding: 18px; font-size: 0.85rem; color: #6b7280; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>College Placement Portal</h1>
+    <p>Vellore Institute of Technology, Vellore – Placement Drive 2026–27</p>
+  </header>
+
+  <main>
+    <div class="info">
+      <h2>College &amp; Department Information</h2>
+      <p><b>College:</b> Vellore Institute of Technology (VIT), Vellore, Tamil Nadu – 632014</p>
+      <p><b>Department:</b> School of Computer Science Engineering and Information Systems (SCORE)</p>
+      <p><b>Programme:</b> M.Tech (Integrated) Software Engineering</p>
+    </div>
+
+    <h2>Current Opportunities</h2>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Company</th><th>Job Role</th><th>Eligibility Criteria</th>
+            <th>Package (CTC)</th><th>Application Deadline</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Infosys</td><td>Systems Engineer</td><td>CGPA ≥ 7.0, no standing arrears</td>
+            <td class="pkg">₹ 6.5 LPA</td><td class="deadline">20-10-2026</td>
+          </tr>
+          <tr>
+            <td>Zoho Corporation</td><td>Software Developer</td><td>CGPA ≥ 7.5, strong DSA skills</td>
+            <td class="pkg">₹ 8.4 LPA</td><td class="deadline">25-10-2026</td>
+          </tr>
+          <tr>
+            <td>Microsoft</td><td>Software Engineer Intern</td><td>CGPA ≥ 8.0, all branches</td>
+            <td class="pkg">₹ 1.25 L / month</td><td class="deadline">30-10-2026</td>
+          </tr>
+          <tr>
+            <td>TCS Digital <b style="color:#f59e0b">(NEW)</b></td><td>Digital Engineer</td><td>CGPA ≥ 7.0, all branches</td>
+            <td class="pkg">₹ 7.0 LPA</td><td class="deadline">05-11-2026</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="contact">
+      <h2>Placement Contact Information</h2>
+      <p><b>Placement Officer:</b> Dr. S. Ramesh, Career Development Centre (CDC)</p>
+      <p><b>Email:</b> placement@vit.ac.in &nbsp;|&nbsp; <b>Phone:</b> +91-416-224-3091</p>
+      <p><b>Office:</b> CDC, Technology Tower, VIT Vellore</p>
+    </div>
+  </main>
+
+  <footer>Placement Portal – Build deployed via Jenkins CI/CD to Kubernetes</footer>
+</body>
+</html>

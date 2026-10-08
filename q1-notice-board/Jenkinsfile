@@ -1,0 +1,119 @@
+// Jenkins CI/CD pipeline for notice-board
+// Jenkins credentials required:
+//   dockerhub       : "Username with password"  -> Docker Hub username + access token
+//   kubeconfig      : "Secret file"             -> your ~/.kube/config (Docker Desktop)
+
+// Runs a shell command on Linux/macOS agents and a batch command on Windows agents
+def run(String cmd) {
+    if (isUnix()) { sh cmd } else { bat cmd }
+}
+
+pipeline {
+    agent any
+
+    options {
+        skipDefaultCheckout(true)
+        timestamps()
+    }
+
+    environment {
+        DOCKERHUB_USER = 'adityarajarora123'          // <-- change to your Docker Hub username
+        APP_NAME       = 'notice-board'
+        APP_DIR        = 'q1-notice-board'
+        IMAGE_NAME     = "${DOCKERHUB_USER}/${APP_NAME}"
+        IMAGE_TAG      = "${BUILD_NUMBER}"
+        TEST_PORT      = '8091'
+        NODE_PORT      = '30081'
+    }
+
+    stages {
+        stage('Clone Code') {
+            steps {
+                script {
+                    def scmVars = checkout scm
+                    echo "Cloned ${scmVars.GIT_URL} (branch ${scmVars.GIT_BRANCH}) at commit ${scmVars.GIT_COMMIT}"
+                }
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                dir("${APP_DIR}") {
+                    run "docker build -t ${IMAGE_NAME}:${IMAGE_TAG} -t ${IMAGE_NAME}:latest ."
+                }
+            }
+        }
+
+        stage('Test Application') {
+            steps {
+                script {
+                    // 1. Image exists
+                    run "docker image inspect ${IMAGE_NAME}:${IMAGE_TAG}"
+                    // 2. Container starts and serves the page
+                    run "docker rm -f ${APP_NAME}-test || exit 0"
+                    run "docker run -d --name ${APP_NAME}-test -p ${TEST_PORT}:80 ${IMAGE_NAME}:${IMAGE_TAG}"
+                    try {
+                        sleep 3
+                        run "curl -f -s -o test-output.html http://localhost:${TEST_PORT}"
+                        echo 'Smoke test passed: container returned HTTP 200'
+                    } finally {
+                        run "docker rm -f ${APP_NAME}-test"
+                    }
+                }
+            }
+        }
+
+        stage('Push Image') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'dockerhub',
+                                                  usernameVariable: 'DH_USER',
+                                                  passwordVariable: 'DH_PASS')]) {
+                    script {
+                        if (isUnix()) {
+                            sh 'echo "$DH_PASS" | docker login -u "$DH_USER" --password-stdin'
+                        } else {
+                            bat 'echo %DH_PASS%| docker login -u %DH_USER% --password-stdin'
+                        }
+                    }
+                    run "docker push ${IMAGE_NAME}:${IMAGE_TAG}"
+                    run "docker push ${IMAGE_NAME}:latest"
+                }
+            }
+        }
+
+        stage('Deploy to Kubernetes') {
+            steps {
+                withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
+                    dir("${APP_DIR}") {
+                        run "kubectl apply -f deployment.yaml"
+                        // Point the Deployment at this build's image -> triggers a rolling update
+                        run "kubectl set image deployment/${APP_NAME} ${APP_NAME}=${IMAGE_NAME}:${IMAGE_TAG}"
+                        run "kubectl rollout status deployment/${APP_NAME} --timeout=180s"
+                    }
+                }
+            }
+        }
+
+        stage('Verify Deployment') {
+            steps {
+                withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
+                    run "kubectl get deployment ${APP_NAME}"
+                    run "kubectl get pods -l app=${APP_NAME} -o wide"
+                    run "kubectl get service ${APP_NAME}-service"
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            echo "SUCCESS: ${IMAGE_NAME}:${IMAGE_TAG} deployed. Open http://localhost:${NODE_PORT}"
+        }
+        failure {
+            echo 'Pipeline FAILED - check the stage logs above.'
+        }
+        always {
+            script { run 'docker logout || exit 0' }
+        }
+    }
+}

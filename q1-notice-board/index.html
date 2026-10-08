@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>College Notice Board</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: "Segoe UI", Arial, sans-serif; background: #eef2f7; color: #1f2937; }
+    header { background: #0b3d91; color: #fff; padding: 28px 20px; text-align: center; }
+    header h1 { font-size: 2rem; letter-spacing: 0.5px; }
+    header h2 { font-size: 1.1rem; font-weight: 400; margin-top: 6px; opacity: 0.9; }
+    main { max-width: 900px; margin: 30px auto; padding: 0 16px; }
+    .board-title { font-size: 1.4rem; margin-bottom: 16px; border-left: 5px solid #f59e0b; padding-left: 10px; }
+    .notice { background: #fff; border-radius: 8px; padding: 18px 20px; margin-bottom: 16px;
+              box-shadow: 0 2px 6px rgba(0,0,0,0.08); }
+    .notice h3 { color: #0b3d91; margin-bottom: 6px; }
+    .date { display: inline-block; background: #fef3c7; color: #92400e; font-size: 0.85rem;
+            padding: 3px 10px; border-radius: 12px; margin-bottom: 8px; }
+    .contact { background: #fff; border-radius: 8px; padding: 18px 20px; margin-top: 24px;
+               box-shadow: 0 2px 6px rgba(0,0,0,0.08); }
+    .contact h3 { margin-bottom: 8px; }
+    footer { text-align: center; padding: 18px; font-size: 0.85rem; color: #6b7280; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Vellore Institute of Technology, Vellore</h1>
+    <h2>School of Computer Science Engineering and Information Systems (SCORE)</h2>
+  </header>
+
+  <main>
+    <p class="board-title">Notice Board</p>
+
+    <div class="notice">
+      <span class="date">Date: 08-10-2026</span>
+      <h3>Assessment VIII – Agile Development Process &amp; DevOps Lab</h3>
+      <p>All M.Tech (Integrated) Software Engineering students must submit their Docker, Kubernetes
+         and Jenkins lab assessment on the course page before the deadline.</p>
+    </div>
+
+    <div class="notice">
+      <span class="date">Date: 06-10-2026</span>
+      <h3>Placement Training – Aptitude Workshop</h3>
+      <p>A two-day aptitude and soft-skills workshop will be held in the SJT Auditorium on
+         15-10-2026 and 16-10-2026. Registration is mandatory.</p>
+    </div>
+
+    <div class="notice">
+      <span class="date">Date: 03-10-2026</span>
+      <h3>Library Timings Extended</h3>
+      <p>The central library will remain open until 11:00 PM during the examination period
+         from 20-10-2026 to 10-11-2026.</p>
+    </div>
+
+    <div class="contact">
+      <h3>Contact Information</h3>
+      <p>Department Office, SCORE – SJT Building, VIT Vellore – 632014</p>
+      <p>Email: score.office@vit.ac.in &nbsp;|&nbsp; Phone: +91-416-224-0000</p>
+    </div>
+  </main>
+
+  <footer>College Notice Board – Deployed with Docker, Kubernetes and Jenkins</footer>
+</body>
+</html>

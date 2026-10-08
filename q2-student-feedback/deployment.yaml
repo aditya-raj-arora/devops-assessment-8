@@ -1,0 +1,50 @@
+# Kubernetes Deployment + NodePort Service for student-feedback
+# Replace adityarajarora123 with your Docker Hub username before applying.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: student-feedback
+  labels:
+    app: student-feedback
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: student-feedback
+  template:
+    metadata:
+      labels:
+        app: student-feedback
+    spec:
+      containers:
+        - name: student-feedback
+          image: adityarajarora123/student-feedback:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              cpu: "50m"
+              memory: "32Mi"
+            limits:
+              cpu: "200m"
+              memory: "128Mi"
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 3
+            periodSeconds: 5
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: student-feedback-service
+spec:
+  type: NodePort
+  selector:
+    app: student-feedback
+  ports:
+    - port: 80
+      targetPort: 80
+      nodePort: 30082

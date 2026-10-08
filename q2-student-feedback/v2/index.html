@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Feedback</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: "Segoe UI", Arial, sans-serif; background: #f1f5f9; color: #1e293b; }
+    header { background: #0f766e; color: #fff; text-align: center; padding: 24px 16px; }
+    header h1 { font-size: 1.8rem; }
+    header p { opacity: 0.9; margin-top: 4px; }
+    .card { max-width: 640px; margin: 30px auto; background: #fff; border-radius: 10px;
+            padding: 26px; box-shadow: 0 3px 10px rgba(0,0,0,0.08); }
+    label { display: block; font-weight: 600; margin: 14px 0 6px; }
+    input, select, textarea { width: 100%; padding: 10px; border: 1px solid #cbd5e1;
+            border-radius: 6px; font-size: 0.95rem; }
+    textarea { resize: vertical; min-height: 90px; }
+    button { margin-top: 20px; width: 100%; padding: 12px; background: #0f766e; color: #fff;
+             border: none; border-radius: 6px; font-size: 1rem; cursor: pointer; }
+    button:hover { background: #115e59; }
+    .version { text-align: center; font-size: 0.8rem; color: #64748b; padding-bottom: 20px; }
+    .new-badge { display: inline-block; background: #f59e0b; color: #fff; font-size: 0.75rem;
+                 padding: 2px 8px; border-radius: 10px; margin-left: 6px; vertical-align: middle; }
+    .summary h2 { font-size: 1.2rem; margin-bottom: 12px; }
+    .bar-row { display: flex; align-items: center; gap: 10px; margin: 6px 0; font-size: 0.9rem; }
+    .bar-row span:first-child { width: 60px; }
+    .bar { flex: 1; height: 12px; background: #e2e8f0; border-radius: 6px; overflow: hidden; }
+    .fill { height: 100%; background: #0f766e; width: 0; transition: width 0.4s; }
+    .avg { font-size: 1.6rem; font-weight: 700; color: #0f766e; }
+    .thankyou { display: none; text-align: center; }
+    .thankyou h2 { color: #0f766e; margin-bottom: 8px; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Student Feedback Portal</h1>
+    <p>VIT Vellore – School of Computer Science Engineering and Information Systems</p>
+  </header>
+
+  <div class="card">
+    <form id="feedbackForm">
+      <label for="course">Course Name</label>
+      <select id="course" required>
+        <option value="">-- Select Course --</option>
+        <option>ISWE406P – Agile Development Process &amp; DevOps</option>
+        <option>Software Testing</option>
+        <option>Database Management Systems</option>
+      </select>
+
+      <label for="faculty">Faculty Name</label>
+      <input type="text" id="faculty" placeholder="e.g. Dr. R. Kumar" required>
+
+      <label for="student">Student Name</label>
+      <input type="text" id="student" placeholder="Your full name" required>
+
+      <label for="regno">Register Number</label>
+      <input type="text" id="regno" placeholder="e.g. 24MIS0292" required>
+
+      <label for="dept">Department</label>
+      <input type="text" id="dept" value="SCORE – Software Engineering" required>
+
+      <label for="rating">Rating</label>
+      <select id="rating" required>
+        <option value="">-- Select Rating --</option>
+        <option value="5">5 – Excellent</option>
+        <option value="4">4 – Very Good</option>
+        <option value="3">3 – Good</option>
+        <option value="2">2 – Average</option>
+        <option value="1">1 – Poor</option>
+      </select>
+
+      <label for="comments">Feedback / Comments</label>
+      <textarea id="comments" placeholder="Write your feedback here..."></textarea>
+
+      <button type="submit">Submit Feedback</button>
+    </form>
+  </div>
+
+  <div class="card thankyou" id="thankyou">
+    <h2>Thank you, <span id="tyName"></span>!</h2>
+    <p>Your feedback for <b id="tyCourse"></b> has been recorded. It helps us improve teaching quality.</p>
+  </div>
+
+  <div class="card summary">
+    <h2>Course Rating Summary <span class="new-badge">NEW</span></h2>
+    <p>Average rating: <span class="avg" id="avg">0.0</span> / 5 &nbsp;(<span id="total">0</span> responses)</p>
+    <div id="bars"></div>
+  </div>
+
+  <p class="version">Version 2.0 – Added Course Rating Summary and Thank-you message</p>
+
+  <script>
+    const counts = { 5: 4, 4: 6, 3: 2, 2: 1, 1: 0 };   // seed data so the summary is not empty
+
+    function renderSummary() {
+      const total = Object.values(counts).reduce((a, b) => a + b, 0);
+      const sum = Object.entries(counts).reduce((a, [k, v]) => a + k * v, 0);
+      document.getElementById("avg").textContent = total ? (sum / total).toFixed(1) : "0.0";
+      document.getElementById("total").textContent = total;
+      const bars = document.getElementById("bars");
+      bars.innerHTML = "";
+      [5, 4, 3, 2, 1].forEach(r => {
+        const pct = total ? (counts[r] / total) * 100 : 0;
+        bars.innerHTML += `<div class="bar-row"><span>${r} star</span>
+          <div class="bar"><div class="fill" style="width:${pct}%"></div></div>
+          <span>${counts[r]}</span></div>`;
+      });
+    }
+
+    document.getElementById("feedbackForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+      counts[document.getElementById("rating").value]++;
+      document.getElementById("tyName").textContent = document.getElementById("student").value;
+      document.getElementById("tyCourse").textContent = document.getElementById("course").value;
+      document.getElementById("thankyou").style.display = "block";
+      renderSummary();
+      this.reset();
+      document.getElementById("dept").value = "SCORE – Software Engineering";
+    });
+
+    renderSummary();
+  </script>
+</body>
+</html>
